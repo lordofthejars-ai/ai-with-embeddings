@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fashion Store Catalog</title>
+    <style>
+        body {
+          font-family: "Poppins", sans-serif;
+          margin: 0;
+          padding: 0;
+          background: #fafafa;
+          color: #333;
+        }
+
+        header {
+          background: linear-gradient(135deg, #111, #444);
+          padding: 30px 20px;
+          color: white;
+          text-align: center;
+          letter-spacing: 1px;
+        }
+
+        #search-container {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          gap: 15px;
+          margin: 25px;
+        }
+
+        #search-input {
+          width: 380px;
+          padding: 12px 15px;
+          font-size: 16px;
+          border-radius: 30px;
+          border: 1px solid #ccc;
+          outline: none;
+          transition: 0.2s;
+        }
+
+        #search-input:focus {
+          border-color: #000;
+          box-shadow: 0 0 3px rgba(0,0,0,0.3);
+        }
+
+        #drop-zone {
+          padding: 12px 20px;
+          border: 2px dashed #666;
+          border-radius: 30px;
+          background: white;
+          cursor: pointer;
+          transition: 0.2s;
+        }
+
+        #drop-zone:hover {
+          background: #f0f0f0;
+        }
+
+        #catalog {
+          display: grid;
+          grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+          gap: 25px;
+          padding: 20px 30px;
+        }
+
+        .product-card {
+          opacity: 0;
+          transform: translateY(20px);
+          transition: opacity 0.6s ease, transform 0.6s ease;
+          background: white;
+          border-radius: 12px;
+          overflow: hidden;
+          box-shadow: 0px 4px 12px rgba(0,0,0,0.1);
+          transition: transform 0.25s ease, box-shadow 0.25s ease;
+        }
+
+        .product-card:hover {
+          transform: translateY(-6px);
+          box-shadow: 0px 8px 20px rgba(0,0,0,0.15);
+        }
+
+        .product-card img {
+          width: 100%;
+          height: 280px;
+          object-fit: cover;
+        }
+
+        .product-info {
+          padding: 15px;
+        }
+
+        .product-name {
+          font-size: 18px;
+          font-weight: 600;
+          margin-bottom: 8px;
+          color: #111;
+        }
+
+        .product-description {
+          font-size: 14px;
+          color: #555;
+          margin-bottom: 10px;
+        }
+
+        .product-tags {
+          font-size: 13px;
+          color: #777;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>FASHION STORE</h1>
+    <p>Discover the latest trends</p>
+</header>
+
+<div id="search-container">
+    <input id="search-input" type="text" placeholder="Search by text or drop an image..." />
+    <div id="drop-zone">Drop Image</div>
+</div>
+
+<div id="catalog"></div>
+
+<script>
+    const catalog = document.getElementById("catalog");
+    const searchInput = document.getElementById("search-input");
+    const dropZone = document.getElementById("drop-zone");
+
+    async function fetchProducts(payload) {
+      catalog.innerHTML = "";
+
+      const response = await fetch("api/products/search", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+
+      const products = await response.json();
+      renderCatalog(products);
+    }
+
+    function renderCatalog(products) {
+      catalog.innerHTML = "";
+
+      products.forEach(p => {
+        const card = document.createElement("div");
+        card.className = "product-card";
+
+        card.innerHTML = `
+          <img src="${p.image}" alt="${p.name}" />
+          <div class="product-info">
+            <div class="product-name">${p.name}</div>
+            <div class="product-description">${p.description}</div>
+            <div class="product-tags">${p.tags.join(", ")}</div>
+          </div>
+        `;
+
+        catalog.appendChild(card);
+        requestAnimationFrame(() => {
+          card.style.opacity = "1";
+          card.style.transform = "translateY(0)";
+        });
+      });
+    }
+
+    searchInput.addEventListener("keydown", e => {
+      if (e.key === "Enter") {
+        const query = searchInput.value.trim();
+        fetchProducts({ search: query });
+      }
+    });
+
+    dropZone.addEventListener("dragover", e => {
+      e.preventDefault();
+      dropZone.style.background = "#e0e0e0";
+    });
+
+    dropZone.addEventListener("dragleave", () => {
+      dropZone.style.background = "white";
+    });
+
+    dropZone.addEventListener("drop", e => {
+      e.preventDefault();
+      dropZone.style.background = "white";
+
+      const file = e.dataTransfer.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = () => {
+        const base64Image = reader.result;
+        fetchProducts({ search: base64Image });
+      };
+
+      reader.readAsDataURL(file);
+    });
+
+    // Load all products on page load
+    window.addEventListener("load", () => {
+      fetchProducts({});
+    });
+</script>
+
+</body>
+</html>
