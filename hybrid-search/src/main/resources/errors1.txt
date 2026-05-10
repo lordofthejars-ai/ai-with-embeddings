@@ -1,0 +1,9 @@
+The Payment Service v3 returns structured error codes for runtime failures.
+
+Error Code: PAY-0421
+Description: Signature validation failed during webhook processing.
+Cause: The X-PAY-SIGNATURE header is missing or malformed.
+Resolution:
+  - Verify that the webhook secret is correctly configured.
+  - Ensure the signature is generated using HMAC-SHA256.
+  - Confirm the header name is exactly "X-PAY-SIGNATURE".

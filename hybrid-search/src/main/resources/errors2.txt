@@ -1,0 +1,5 @@
+The Payment Service v3 returns structured error codes for runtime failures.
+
+Error Code: PAY-0517
+Description: Currency mismatch during settlement.
+Cause: The transaction currency does not match the merchant account currency.

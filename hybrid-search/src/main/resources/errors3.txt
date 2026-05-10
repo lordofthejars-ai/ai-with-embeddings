@@ -1,0 +1,4 @@
+The Payment Service v3 returns structured error codes for runtime failures.
+
+Error Code: PAY-0999
+Description: Internal timeout while contacting the fraud detection service.
