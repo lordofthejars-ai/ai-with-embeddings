@@ -1,0 +1,15 @@
+= AI With Embeddings
+
+This repository contains multiple examples of how to use Vector Embeddings.
+Some examples uses DJL, others LangCHain4j, and others Quarkus.
+In the case of Quarkus projects, having Docker or Podman installed is a requirement to start the application in dev mode.
+
+* `text-embedding-session`: Contains a simple example calculating embeddings and compare them using cosine distance method.
+* `multimodel-embedding-session`: Contains a simple example calculating embeddings with `CLIP` multimodel mixing texts and images.
+* `movie-recommendation`: A Quarkus application that contains a Movie recommendation engine using PG Vector.
+* `shopping-qna`: A Quarkus application that let you search products ina shop either as text or as an image.
+* `spam-detector`: Using KNN algorithm to classify a text as spam or not.
+* `embedding-text-cluster`: Using DBSCAN for classifying news into categories discovered at runtime with the help of an LLM.
+* `custom-embeddings`: Example of creating a vector embedding not using a model but a custom rules. Useful for classifying incidents.
+* `hybrid-search`: Example that uses hybrid search the return the best result using embeddings or BM25 algorithm. Useful when some searches requires not semantic form but more exact search (i.e error codes)
+
